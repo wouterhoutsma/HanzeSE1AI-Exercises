@@ -156,13 +156,9 @@ def astar(queue):
     print(i)
     return goal
 
-start = """2 5 8
-0 6 3
-1 4 7"""
-
-# start = """0 1 3
-# 5 2 6
-# 4 7 8"""
+start = """0 1 3
+5 2 6
+4 7 8"""
 
 temp_board = start.split('\n')
 size = len(temp_board)
