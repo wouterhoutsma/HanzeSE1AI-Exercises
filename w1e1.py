@@ -52,7 +52,7 @@ class Node:
         return ''.join(self.left) + '|' + ''.join(self.right)
 
     def is_valid(self):
-        sides = [self.left, self.right]
+        sides = (self.left, self.right)
         for side in sides:
             if 'F' in side:
                 continue

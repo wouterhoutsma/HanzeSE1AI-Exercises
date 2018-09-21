@@ -22,7 +22,6 @@ class Path:
         return string[0:-2] + '\n'
 
 
-
 class Node:
     def __init__(self, number):
         self.numbers = [number]
