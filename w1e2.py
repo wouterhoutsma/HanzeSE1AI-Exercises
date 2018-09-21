@@ -1,5 +1,9 @@
 import random
 
+n = 16
+loop_nodes = True
+
+
 class Node:
     def __init__(self, x, y, character):
         self.x = x
@@ -17,15 +21,19 @@ class Node:
     def __str__(self):
         colours = [
             '\033[0m',
-            '\033[92m', # OKGREEN
-            '\033[93m', # Warning
-            '\033[94m', # OKBLUE
+            '\033[92m',  # OKGREEN
+            '\033[93m',  # Warning
+            '\033[94m',  # OKBLUE
         ]
         colour = colours[3] if self.part_of_n_words >= 3 else colours[self.part_of_n_words]
         return colour + self.char + '\033[0m'
 
 
 def dfs(word, node, path=[]):
+    global loop_nodes
+    if not loop_nodes:
+        if node in path:
+            return False
     path.append(node)
     # Check if path + this node == word.
     comparison = ''
@@ -48,8 +56,7 @@ with open('words.txt', 'r') as myfile:
 words = set(words)
 
 # Generate graph
-n = 9
-characters = 'abcdefghijklmnopqrstuvwxyz' # missing characters, can't have all words
+characters = 'abcdefghijklmnopqrstuvwxyz'  # missing characters, can't have all words
 nodes = {}
 for x in range(0, n):
     nodes[x] = {}
@@ -75,6 +82,7 @@ for word in words:
         for y in nodes[x]:
             path = dfs(word, nodes[x][y], [])
             if path:
+                print(str(path[0].y + 1) + "," + str(path[0].x + 1) + ": " + word)
                 for node in path:
                     node.inc_parts_n()
 
