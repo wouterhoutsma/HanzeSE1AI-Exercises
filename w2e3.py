@@ -204,7 +204,7 @@ try:
             continue
         player_turn = board.turn() == Board.BLACK
         if eve:
-            board = negamax_move(board, 4, alpha_beta)
+            board = negamax_move(board, 3, alpha_beta)
             print(board)
 
             continue
