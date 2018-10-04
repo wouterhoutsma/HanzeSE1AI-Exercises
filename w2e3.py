@@ -56,7 +56,10 @@ class Board:
             return score[self.turn()]
 
     def finished(self):
-        return len(self.calculate_moves()) == 0
+        for cell in self.board:
+            if cell is Board.EMPTY:
+                return False
+        return True
 
     def turn(self):
         return Board.BLACK if self.moves % 2 == 0 else Board.WHITE
@@ -182,7 +185,7 @@ def negamax_move(board, depth, ab=False):
             best_opt = option
         if best_opt.value < option.value:
             best_opt = option
-    return option
+    return best_opt
 
 
 board = Board()
@@ -196,9 +199,12 @@ try:
     while not board.finished():
 
         moves = board.calculate_moves()
+        if len(moves) == 0:
+            board.moves = board.moves + 1
+            continue
         player_turn = board.turn() == Board.BLACK
         if eve:
-            board = negamax_move(board, 3, alpha_beta)
+            board = negamax_move(board, 4, alpha_beta)
             print(board)
 
             continue
