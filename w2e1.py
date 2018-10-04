@@ -43,7 +43,7 @@ def tour_length(tour):
 def make_cities(n, width=1000, height=1000):
     # Make a set of n cities, each with random coordinates within a rectangle (width x height).
 
-    random.seed(1113) # the current system time is used as a seed
+    # random.seed(1113) # the current system time is used as a seed
     # note: if we use the same seed, we get the same set of cities
 
     return [City(random.randrange(width), random.randrange(height), False)
@@ -94,24 +94,31 @@ def nearest_neighbour(cities):
         lowest.v = True
     return tour
 
+def Break():
+    pass
+
 def remove_crossings(cities):
     tour = nearest_neighbour(cities)
     crossings_found = True
     while crossings_found:
         crossings_found = False
-        print("Got here")
-        for index_a in range(len(tour)-1):
-            a1 = tour[index_a]
-            a2 = tour[index_a+1]
-            for index_b in range(len(tour)-1):
-                b1 = tour[index_b]
-                b2 = tour[index_b+1]
-                if find_intersection(a1.x, a1.y, a2.x, a2.y, b1.x, b1.y, b2.x, b2.y):
-                    print(a1, a2, b1, b2)
-                    tour[index_a+1] = b2
-                    tour[index_b+1] = a2
-                    crossings_found = True
-                    break
+        try:
+            for index_a in range(0, len(tour)-1):
+                a1 = tour[index_a]
+                a2 = tour[index_a+1]
+                for index_b in range(0, len(tour)-1):
+                    if index_b <= index_a + 1:
+                        continue
+                    b1 = tour[index_b]
+                    b2 = tour[index_b+1]
+                    if find_intersection(a1.x, a1.y, a2.x, a2.y, b1.x, b1.y, b2.x, b2.y):
+                        print(a1, a2, b1, b2)
+                        tour[index_b] = a2
+                        tour[index_a+1] = b1
+                        crossings_found = True
+                        raise Break()
+        except:
+            pass
 
     return tour
 
@@ -135,12 +142,13 @@ def find_intersection(
     x = (a * x34 - b * x12) / interception
     y = (a * y34 - b * y12) / interception
 
-    if x >= x1 and x <= x2 and x >= x3 and x <= x4:
-        return x, y
+    if x2 > x > x1 or x2 < x < x1:
+        if x3 > x > x4 or x3 < x < x4:
+            return x, y
     return False
 
 cities = make_cities(10)
-
+print(cities)
 plot_tsp(remove_crossings, cities)
 #plot_tsp(nearest_neighbour, cities)
 
