@@ -1,5 +1,6 @@
 import math
-ucs = False
+from queue import PriorityQueue
+ucs = True
 
 
 class Board:
@@ -7,6 +8,7 @@ class Board:
         self.board = {}
         self.n = n
         self.previous = previous if previous is not None else []
+        self.score = False
         for i in range(n):
             self.board[i] = {}
             for j in range(n):
@@ -20,26 +22,33 @@ class Board:
         pref_x = digit - pref_y * self.n - 1
         return abs(pref_x - x) + abs(pref_y - y)
 
-    def score(self):
-        global ucs
-        if ucs:
-            return len(self.previous) + 1
-        score = len(self.previous)
-        for y in self.board:
-            for x in self.board[y]:
-                number = self.board[y][x]
-                if number != 0:
-                    score += self.digit_offset(number, x, y)
-        return int(score)
+    def calc_score(self):
+        if not self.score:
+            global ucs
+            if ucs:
+                return len(self.previous) + 1
+            score = len(self.previous)
+            for y in self.board:
+                for x in self.board[y]:
+                    number = self.board[y][x]
+                    if number != 0:
+                        score += self.digit_offset(number, x, y)
+            self.score = score
+
+        return int(self.score)
 
     def is_goal(self):
-        for y in self.board:
-            for x in self.board[y]:
-                number = self.board[y][x]
-                if number != 0:
-                    if self.digit_offset(number, x, y) > 0:
-                        return False
+        score = self.calc_score() - len(self.previous)
+        if score > 0:
+            return False
         return True
+
+    def __lt__(self, other):
+        return self.calc_score() < other.calc_score()
+
+    # needed for not in / in list comparison
+    def __eq__(self, other):
+        return self.board == other.board
 
     def options(self):
         # Find zero
@@ -93,72 +102,42 @@ class Board:
         return board
 
     def __str__(self):
-        string = "\n______\n"
+        string = "______\n"
         for y in self.board:
             for x in self.board[y]:
                 string = string + str(self.board[y][x]) + " "
             string = string + "\n"
-        return string + "______\n"
+        return string + "______"
 
-
-class PriorityQueue:
-    def __init__(self):
-        self.queue = {}
-        self.visited = []
-
-    def add(self, board, priority):
-        if board in self.visited:
-            return
-        priority = int(priority)
-        if priority not in self.queue:
-            self.queue[priority] = []
-        self.queue[priority].append(board)
-
-    def next(self):
-        lowest = None
-        for key in self.queue.keys():
-            if lowest is None or lowest > key:
-                lowest = key
-        return_value = self.queue[lowest].pop()
-        if len(self.queue[lowest]) == 0:
-            self.queue.pop(lowest)
-        self.visited.append(return_value)
-        return return_value
-
-    def __str__(self):
-        string = ""
-        for key in self.queue.keys():
-            string = string + str(key) + ', '
-        return string[0:-2]
-
-
-# def astar(queue):
-#     board = queue.next()
-#     if board.is_goal():
-#         return board
-#     for option in board.options():
-#         queue.add(option, option.score())
-#
-#     return astar(queue)
 
 def astar(queue):
     goal = None
-    i = 0
-    while goal is None:
-        i += 1
-        if i % 1000 == 0:
-            print(i)
-        board = queue.next()
+    count = 0
+    done = []
+    while not queue.empty():
+        p, board = queue.get()
+        if count % 1000 == 0:
+            print("_________")
+            for b in board.previous:
+                print(b)
+        done.append(board)
         if board.is_goal():
             goal = board
+            break
         for option in board.options():
-            queue.add(option, option.score())
-    print(i)
+            if option not in done:
+                queue.put((option.calc_score(), option))
+        count += 1
+    print("Found {} in {} moves".format("nothing" if goal is None else "goal", count))
     return goal
 
 start = """0 1 3
 5 2 6
 4 7 8"""
+#
+# start = """8 6 7
+# 2 5 4
+# 3 0 1"""
 
 temp_board = start.split('\n')
 size = len(temp_board)
@@ -168,8 +147,9 @@ for i in range(len(temp_board)):
     for j in range(len(y)):
         board.set_number(j, i, y[j])
 
+# print(board.digit_offset(1, 2, 0))
 queue = PriorityQueue()
-queue.add(board, board.score())
+queue.put((board.calc_score(), board))
 board = astar(queue)
 
 print("__________________")
