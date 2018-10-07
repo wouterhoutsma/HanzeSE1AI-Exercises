@@ -22,7 +22,7 @@ class Node():
         return self.g >= other.g
 
     def __gt__(self, other):
-        return self.g > other.ggit 
+        return self.g > other.g
 
 
 
