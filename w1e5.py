@@ -1,6 +1,6 @@
 import math
 from queue import PriorityQueue
-ucs = True
+ucs = False
 
 
 class Board:
@@ -32,9 +32,9 @@ class Board:
                 for x in self.board[y]:
                     number = self.board[y][x]
                     if number != 0:
-                        score += self.digit_offset(number, x, y)
+                        offset = self.digit_offset(number, x, y)
+                        score += offset**2  # sq(Offset) <= minimal distance to target
             self.score = score
-
         return int(self.score)
 
     def is_goal(self):
@@ -116,10 +116,6 @@ def astar(queue):
     done = []
     while not queue.empty():
         p, board = queue.get()
-        if count % 1000 == 0:
-            print("_________")
-            for b in board.previous:
-                print(b)
         done.append(board)
         if board.is_goal():
             goal = board
@@ -128,16 +124,16 @@ def astar(queue):
             if option not in done:
                 queue.put((option.calc_score(), option))
         count += 1
-    print("Found {} in {} moves".format("nothing" if goal is None else "goal", count))
+    print("Found {} in {} iterations, path is {} steps".format("nothing" if goal is None else "goal", count, len(goal.previous)-1))
     return goal
-
-start = """0 1 3
-5 2 6
-4 7 8"""
 #
-# start = """8 6 7
-# 2 5 4
-# 3 0 1"""
+# start = """0 1 3
+# 5 2 6
+# 4 7 8"""
+
+start = """8 6 7
+2 5 4
+3 0 1"""
 
 temp_board = start.split('\n')
 size = len(temp_board)
@@ -147,7 +143,6 @@ for i in range(len(temp_board)):
     for j in range(len(y)):
         board.set_number(j, i, y[j])
 
-# print(board.digit_offset(1, 2, 0))
 queue = PriorityQueue()
 queue.put((board.calc_score(), board))
 board = astar(queue)

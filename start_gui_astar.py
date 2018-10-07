@@ -1,6 +1,7 @@
 import tkinter as tk
 from tkinter import ttk
 from w1e4 import Node
+from queue import PriorityQueue
 
 import random
 
@@ -16,7 +17,7 @@ goalc = 'yellow'
 
 # global vars
 PAUSE_STATUS = False
-PROB = 0.3 # probability blocking node
+PROB = 0.2 # probability blocking node
 SIZE  = 25 # the nr of nodes=grid crossings in a row (or column)
 
 # global var: pixel sizes
@@ -198,19 +199,13 @@ def aStar(grid, start, end):
     endNode = Node(None, end)
     endNode.g = endNode.h = endNode.f = 0
 
-    openList = []
+    openList = PriorityQueue()
     closedList = []
 
-    openList.append(startNode)
-    while len(openList) > 0:
-        currentNode = openList[0]
-        currentIndex = 0
-        for index, item in enumerate(openList):
-            if item.f < currentNode.f:
-                currentNode = item
-                currentIndex = index
+    openList.put((startNode.g, startNode))
+    while not openList.empty():
+        pos, currentNode = openList.get()
 
-        openList.pop(currentIndex)
         closedList.append(currentNode)
 
         # Found the goal, endNode (backtracking and forming the final path)
@@ -245,16 +240,16 @@ def aStar(grid, start, end):
 
             # Child is already in the openList
             match = False
-            for openNode in openList:
-                if child == openNode: match = True
-                if match and child.g > openNode.g: break # worse path
-                if match and child.g < openNode.g: # better path
-                    openNode.parent = currentNode
-                    openNode.g = currentNode.g + 1
-                    openNode.f = child.g + child.h
+            for openNode in openList.queue:
+                if child == openNode[1]: match = True
+                if match and child.g > openNode[1].g: break # worse path
+                if match and child.g < openNode[1].g: # better path
+                    openNode[1].parent = currentNode
+                    openNode[1].g = currentNode.g + 1
+                    openNode[1].f = child.g + child.h
             # if the child is found on the openList, with a better path: continue
             if match: continue
-            openList.append(child)
+            openList.put((child.g, child))
 
 def UCS(grid, start, end):
     startNode = Node(None, start)

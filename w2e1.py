@@ -43,7 +43,7 @@ def tour_length(tour):
 def make_cities(n, width=1000, height=1000):
     # Make a set of n cities, each with random coordinates within a rectangle (width x height).
 
-    # random.seed(1113) # the current system time is used as a seed
+    random.seed(1113) # the current system time is used as a seed
     # note: if we use the same seed, we get the same set of cities
 
     return [City(random.randrange(width), random.randrange(height), False)

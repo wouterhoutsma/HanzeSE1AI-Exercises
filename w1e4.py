@@ -12,6 +12,17 @@ class Node():
     def __eq__(self, other):
         return self.position == other.position
 
+    def __lt__(self, other):
+        return self.g < other.g
+
+    def __le__(self, other):
+        return self.g <= other.g
+
+    def __ge__(self, other):
+        return self.g >= other.g
+
+    def __gt__(self, other):
+        return self.g > other.g
 
 
 
