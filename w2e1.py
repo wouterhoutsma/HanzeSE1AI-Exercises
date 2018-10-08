@@ -80,7 +80,9 @@ def nearest_neighbour(cities):
     tour = []
     tour.append(cities[0])
     cities[0].v = True
-    for c in cities:
+    lowest = cities[0]
+    while lowest is not False:
+        c = lowest
         lowest = False
         for comparison in cities:
             if comparison.v:
@@ -149,6 +151,6 @@ def find_intersection(
 
 cities = make_cities(10)
 print(cities)
+# plot_tsp(remove_crossings, cities)
 plot_tsp(remove_crossings, cities)
-#plot_tsp(nearest_neighbour, cities)
 
