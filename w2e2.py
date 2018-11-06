@@ -66,7 +66,7 @@ def holdAtX(state):
     # goal will be reached when pending is added
     if (state['pending'] + state[scoreKey]) >= GOAL: state = hold(state)
     # pending reached: hold value of x
-    elif state['pending'] >= HOLD_AT_X: state = hold(state)
+    elif state['pending'] >= x: state = hold(state)
     # keep rolling until we reach a pending value of x
     else: state = roll(state, random.randint(1, 6))
 
@@ -178,12 +178,11 @@ def playPig(p1Strat, p2Strat, state):
     return playPig(p1Strat, p2Strat, state)
 
 # Variable initialization
-GOAL = 10
-HOLD_AT_X = 20      # P1
-HOLD_AT_X2 = 10     # P2
+GOAL = 30
+HOLD_AT_X = 10     # P1
+HOLD_AT_X2 = 20     # P2
 # p1 == False, p2 == True
 startState = {'p': False, 'p1Score': 0, 'p2Score': 0, 'pending': 0, 'bestX': 0}
-
 # Function calls
 
 # endState = playPig(holdAtX, holdAtX, startState)
@@ -192,16 +191,16 @@ startState = {'p': False, 'p1Score': 0, 'p2Score': 0, 'pending': 0, 'bestX': 0}
 # print("endState:", endState)
 # print("player {0} wins with the {1} strategy".format(playerWon, strategy))
 # C
-# games = []
-# p1 = 0
-# p2 = 0
-# while len(games) < 100:
-#     endState = playPig(holdAtX, holdAtX, startState)
-#     p1 = (p1 + 1) if endState['p'] else p1
-#     p2 = (p2 + 1) if not endState['p'] else p2
-#     games.append(endState)
-# print("holdAtX(20) won {0} of a 100 games".format(p1))
-# print("holdAtX(10) won {0} of a 100 games".format(p2))
+games = []
+p1 = 0
+p2 = 0
+while len(games) < 10000:
+    endState = playPig(holdAtX, holdAtX, startState)
+    p1 = (p1 + 1) if endState['p'] else p1
+    p2 = (p2 + 1) if not endState['p'] else p2
+    games.append(endState)
+print("holdAtX({1}) won {0} of a 100 games".format(p1, HOLD_AT_X))
+print("holdAtX({1}) won {0} of a 100 games".format(p2, HOLD_AT_X2))
 
 # D
 # endState = bestHoldAtXValue(startState)
@@ -214,8 +213,8 @@ startState = {'p': False, 'p1Score': 0, 'p2Score': 0, 'pending': 0, 'bestX': 0}
 # print("Optimal game results: ", endState)
 #
 # F
-endState = playPig(playOptimal, clueless, startState)
-print("final state after playing with a goal of {0}".format(GOAL), endState)
+# endState = playPig(holdAtX, clueless, startState)
+# print("final state after playing with a goal of {0}".format(GOAL), endState)
 
 # print("startState: ", startState)
 # print("the best action for a goal of 6 is: ", bestAction(startState))
