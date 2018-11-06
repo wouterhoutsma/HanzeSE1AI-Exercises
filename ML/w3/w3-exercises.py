@@ -71,7 +71,7 @@ some_digit = X[test_waarde]
 #     plt.show()
 
 img = some_digit.reshape(28,28)
-plt.imshow(img, cmap=matplotlib.cm.binary, interpolation="nearest")
+# plt.imshow(img, cmap=matplotlib.cm.binary, interpolation="nearest")
 # plt.show()
 
 
@@ -116,7 +116,7 @@ sgd_clf = SGDClassifier(random_state=42)
 # aangemaakt.
 
 #YOUR CODE HERE - deel 3
-sgd_clf.fit(X_train, y_train_5)
+sgd_clf.fit(X_train, y_train)
 print ("Voorspellen van digit nummer {}: dit zou een 5 moeten opleveren.".format(test_waarde))
 print ( sgd_clf.predict([some_digit])[0] )
 
