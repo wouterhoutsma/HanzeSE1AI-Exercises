@@ -1,3 +1,4 @@
 .idea
 __pycache__
 exercises.iml
+mnist-original.mat
